@@ -1,0 +1,14 @@
+import { useState } from "react";
+
+function CreateGroupModal({ onClose, onSave, group }) {
+  const [groupName, setGroupName] = useState(group?.name || "");
+  const [totalMembers, setTotalMembers] = useState(group?.totalMembers?.toString() || "");
+  const [totalChitAmount, setTotalChitAmount] = useState(group?.totalChitAmount?.toString() || "");
+  const [error, setError] = useState("");
+  const editing = Boolean(group);
+  const amountPerMember = Number(totalMembers) > 0 && Number(totalChitAmount) > 0 ? Number(totalChitAmount) / Number(totalMembers) : 0;
+  const submit = (event) => { event.preventDefault(); if (!groupName.trim()) return setError("Group name is required."); if (!Number.isInteger(Number(totalMembers)) || Number(totalMembers) < 1) return setError("Enter a valid number of members."); if (Number(totalChitAmount) <= 0 || Number(totalChitAmount) % Number(totalMembers) !== 0) return setError("Total amount must be equally divisible among all members."); onSave({ name: groupName.trim(), totalMembers, totalChitAmount }); };
+  return <div className="modal-backdrop" role="presentation" onMouseDown={onClose}><section className="group-modal" role="dialog" aria-modal="true" aria-labelledby="group-modal-title" onMouseDown={(event) => event.stopPropagation()}><div className="modal-header"><div><p className="eyebrow">{editing ? "UPDATE GROUP" : "NEW GROUP"}</p><h2 id="group-modal-title">{editing ? "Edit Group" : "Create Group"}</h2></div><button className="modal-close" type="button" onClick={onClose} aria-label="Close">x</button></div><form onSubmit={submit} noValidate>{error && <p className="form-message error" role="alert">{error}</p>}<label>Group Name<input value={groupName} onChange={(event) => { setGroupName(event.target.value); setError(""); }} placeholder="For example, L1" autoFocus /></label><label>Number of Members<input type="number" min={group?.members.length || 1} step="1" value={totalMembers} onChange={(event) => { setTotalMembers(event.target.value); setError(""); }} placeholder="For example, 20" /></label><label>Total Chit Amount<input type="number" min="1" step="1" value={totalChitAmount} onChange={(event) => { setTotalChitAmount(event.target.value); setError(""); }} placeholder="For example, 100000" /></label>{amountPerMember > 0 && <div className="calculation-summary"><span>Total Chit Amount: <strong>{formatCurrency(totalChitAmount)}</strong></span><span>Members: <strong>{totalMembers}</strong></span><span>Amount Per Member: <strong>{formatCurrency(amountPerMember)}</strong></span></div>}<div className="modal-actions"><button className="text-button" type="button" onClick={onClose}>Cancel</button><button className="primary-button" type="submit">{editing ? "Save Changes" : "Create Group"}</button></div></form></section></div>;
+}
+const formatCurrency = (value) => `₹${Number(value).toLocaleString("en-IN")}`;
+export default CreateGroupModal;

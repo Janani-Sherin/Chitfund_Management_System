@@ -1,0 +1,1 @@
+.member-list-row .all-members-row{grid-template-columns:minmax(100px,.9fr) minmax(120px,1fr) minmax(125px,1fr) minmax(180px,1.8fr) minmax(75px,.6fr) auto}.group-label{color:#1a655b;font-weight:700}@media(max-width:760px){.member-list-row .all-members-row{grid-template-columns:1fr 1fr}.member-list-row .all-members-row .group-label{grid-column:1/-1}}
